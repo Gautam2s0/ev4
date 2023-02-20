@@ -50,6 +50,7 @@ userRouter.post("/login", async(req, res) => {
 
     const { email,password} = req.body;
   const exist=await UserModel.find({email})
+  console.log(exist[0]._id)
   
   try{
     if(exist.length==0){
@@ -60,7 +61,8 @@ userRouter.post("/login", async(req, res) => {
     else{
         bcrypt.compare(password,exist[0].password,async(err,hash)=>{
             if(hash){
-                token=jwt.sign({_id:exist._id},process.env.secretKEY)
+              console.log(exist._id)
+                token=jwt.sign({_id:exist[0]._id},process.env.secretKEY)
                 
                 res.send({msg:"login successfully done",token})
             }

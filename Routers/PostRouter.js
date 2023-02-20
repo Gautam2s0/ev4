@@ -1,9 +1,8 @@
 const express = require("express");
-const { PostModel } = require("../Models/PostModel");
+const router = express.Router();
 
-const Postroute=express.Router()
 
-Postroute.get("/",async(req,res)=>{
+router.get("/",async(req,res)=>{
   const query=req.query
   try{
     const data=await PostModel.find(query)
@@ -13,20 +12,8 @@ Postroute.get("/",async(req,res)=>{
     res.send(err)
   }
 })
-Postroute.get("/top",async(req,res)=>{
-  try{
-    let  data=await PostModel.find({no_if_comments})
-    const result=data.sort((a,b)=>{
-      return b.no_if_comments-a.no_if_comments
-    })
-    res.send(result[0])
-  }
-  catch(err){
-    res.send(err)
-  }
-})
 
-Postroute.post("/create",(req,res)=>{
+router.post("/create",(req,res)=>{
   try{
     const post=new PostModel(req.body)
     await.save()
@@ -36,7 +23,8 @@ Postroute.post("/create",(req,res)=>{
     res.send(err)
   }
 })
-Postroute.patch("/update/:id",async(req,res)=>{
+
+router.patch("/update/:id",async(req,res)=>{
   let payload=req.body
   id=req.params
   const existuser=await PostModel.find({_id:_id})
@@ -57,7 +45,7 @@ Postroute.patch("/update/:id",async(req,res)=>{
   }
   
 })
-Postroute.delete("/delete/:id",async(req,res)=>{
+router.delete("/delete/:id",async(req,res)=>{
   id=req.params
   const existuser=await PostModel.find({_id:_id})
   const author=existuser.author
@@ -77,7 +65,17 @@ Postroute.delete("/delete/:id",async(req,res)=>{
   }
   
 })
+router.get("/top",async(req,res)=>{
+  try{
+    let  data=await PostModel.find({no_if_comments})
+    const result=data.sort((a,b)=>{
+      return b.no_if_comments-a.no_if_comments
+    })
+    res.send(result[0])
+  }
+  catch(err){
+    res.send(err)
+  }
+})
 
-module.exports={
-  Postroute
-}
+module.exports={router}
